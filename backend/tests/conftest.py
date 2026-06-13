@@ -305,8 +305,9 @@ def app(mock_firestore, mock_orchestrator, mock_websocket_manager):
         patch("api.dependencies.get_firestore_client", return_value=mock_firestore),
         patch("api.dependencies.get_bigquery_client", return_value=MagicMock()),
         patch("api.dependencies.get_pubsub_service", return_value=AsyncMock()),
-        patch("api.main.orchestrator", mock_orchestrator),
-        patch("api.main.ws_manager", mock_websocket_manager),
+        patch("services.pubsub_service.PubSubService", return_value=AsyncMock()),
+        patch("api.websocket_manager.WebSocketManager", return_value=mock_websocket_manager),
+        patch("agents.orchestrator.AgentOrchestrator", return_value=mock_orchestrator),
     ):
         from api.main import app as _app
         yield _app
