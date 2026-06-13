@@ -1,0 +1,77 @@
+# backend/api/schemas/__init__.py
+from api.schemas.trace import (
+    AgentSpan,
+    AgentTrace,
+    FailureType,
+    SpanKind,
+    SpanStatus,
+    ToolCallRecord,
+    TraceFilter,
+    TraceIngestRequest,
+    TraceIngestResponse,
+    TraceListResponse,
+    TracePreview,
+    TraceStatus,
+)
+from api.schemas.diagnosis import (
+    AnomalySignal,
+    BlastRadius,
+    DiagnosisResult,
+    DiagnosisSummary,
+    DiagnosisTriggerRequest,
+    DiagnosisTriggerResponse,
+    ReasoningStep,
+    RootCauseCategory,
+    SeverityLevel,
+)
+from api.schemas.repair import (
+    DiffLine,
+    RepairArtifact,
+    RepairApproveRequest,
+    RepairApplyRequest,
+    RepairDiff,
+    RepairListResponse,
+    RepairRollbackRequest,
+    RepairStatus,
+    RepairSummary,
+    RepairType,
+    TestCase,
+)
+from api.schemas.replay import (
+    FrameType,
+    ReplayAnnotation,
+    ReplayFrame,
+    ReplayPlaybackState,
+    ReplayResponse,
+    ReplaySession,
+)
+from api.schemas.dashboard import (
+    AgentHealth,
+    AgentHealthMetrics,
+    AgentStatus,
+    DashboardOverview,
+    IncidentListResponse,
+    IncidentSeverity,
+    IncidentStatus,
+    IncidentSummary,
+    MetricDataPoint,
+    SystemOverview,
+    TrendDirection,
+)
+
+__all__ = [
+    "AgentSpan", "AgentTrace", "FailureType", "SpanKind", "SpanStatus",
+    "ToolCallRecord", "TraceFilter", "TraceIngestRequest", "TraceIngestResponse",
+    "TraceListResponse", "TracePreview", "TraceStatus",
+    "AnomalySignal", "BlastRadius", "DiagnosisResult", "DiagnosisSummary",
+    "DiagnosisTriggerRequest", "DiagnosisTriggerResponse", "ReasoningStep",
+    "RootCauseCategory", "SeverityLevel",
+    "DiffLine", "RepairArtifact", "RepairApproveRequest", "RepairApplyRequest",
+    "RepairDiff", "RepairListResponse", "RepairRollbackRequest", "RepairStatus",
+    "RepairSummary", "RepairType", "TestCase",
+    "FrameType", "ReplayAnnotation", "ReplayFrame", "ReplayPlaybackState",
+    "ReplayResponse", "ReplaySession",
+    "AgentHealth", "AgentHealthMetrics", "AgentStatus", "DashboardOverview",
+    "IncidentListResponse", "IncidentSeverity", "IncidentStatus", "IncidentSummary",
+    "MetricDataPoint", "SystemOverview", "TrendDirection",
+]

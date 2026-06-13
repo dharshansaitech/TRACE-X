@@ -1,0 +1,289 @@
+/* frontend/app/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Aviation dark theme — default */
+    --background: 222 47% 6%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 8%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 199 89% 48%;
+    --primary-foreground: 222 47% 6%;
+
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 12%;
+    --muted-foreground: 215 20% 55%;
+
+    --accent: 217 33% 17%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 199 89% 48%;
+
+    --surface: 222 47% 9%;
+    --surface-elevated: 222 47% 12%;
+    --surface-dim: 222 47% 7%;
+
+    --radius: 0.5rem;
+
+    /* Status colors */
+    --color-ok: #22c55e;
+    --color-warning: #f59e0b;
+    --color-error: #ef4444;
+    --color-critical: #dc2626;
+    --color-info: #3b82f6;
+    --color-primary: #0ea5e9;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground));
+  }
+}
+
+@layer components {
+  /* Glass card effect */
+  .glass-card {
+    @apply bg-card/80 backdrop-blur-md border border-border/50 shadow-glass;
+  }
+
+  /* Glow effects */
+  .glow-primary {
+    box-shadow: 0 0 20px rgba(14, 165, 233, 0.3);
+  }
+
+  .glow-danger {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+  }
+
+  .glow-success {
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+  }
+
+  /* Aviation grid background */
+  .aviation-grid {
+    background-image:
+      linear-gradient(rgba(14, 165, 233, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(14, 165, 233, 0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* Status indicators */
+  .status-dot {
+    @apply w-2 h-2 rounded-full inline-block;
+  }
+  .status-dot-healthy { @apply bg-success animate-pulse-slow; }
+  .status-dot-degraded { @apply bg-warning animate-pulse-slow; }
+  .status-dot-critical { @apply bg-danger animate-pulse; }
+  .status-dot-offline { @apply bg-muted-foreground; }
+
+  /* Severity badges */
+  .badge-critical { @apply bg-critical/20 text-red-400 border border-red-800/50; }
+  .badge-high { @apply bg-danger/20 text-orange-400 border border-orange-800/50; }
+  .badge-medium { @apply bg-warning/20 text-yellow-400 border border-yellow-800/50; }
+  .badge-low { @apply bg-success/20 text-green-400 border border-green-800/50; }
+  .badge-info { @apply bg-blue-500/20 text-blue-400 border border-blue-800/50; }
+
+  /* Code blocks */
+  .code-block {
+    @apply font-mono text-sm bg-muted/50 rounded-lg p-4 overflow-x-auto border border-border/50;
+  }
+
+  /* Timeline scrubber */
+  .timeline-track {
+    @apply relative h-2 bg-muted/50 rounded-full cursor-pointer overflow-hidden;
+  }
+
+  /* Animated indicator */
+  .live-indicator {
+    @apply inline-flex items-center gap-1.5;
+  }
+  .live-dot {
+    @apply w-2 h-2 rounded-full bg-success;
+    animation: livePulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes livePulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.85); }
+  }
+
+  /* ── Mission Control extensions ─────────────────────────────────────── */
+
+  /* Command card: deeper depth than glass-card, for hero/centerpiece elements */
+  .command-card {
+    @apply relative bg-card/90 backdrop-blur-xl border border-border/60 rounded-2xl;
+    box-shadow:
+      0 8px 40px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  /* Hero metric gradient text */
+  .text-hero-gradient {
+    @apply bg-gradient-to-br from-tracex-200 via-tracex-400 to-tracex-600 bg-clip-text text-transparent;
+  }
+  .text-hero-gradient-danger {
+    @apply bg-gradient-to-br from-red-300 via-danger to-red-700 bg-clip-text text-transparent;
+  }
+  .text-hero-gradient-warning {
+    @apply bg-gradient-to-br from-amber-200 via-warning to-amber-600 bg-clip-text text-transparent;
+  }
+  .text-hero-gradient-success {
+    @apply bg-gradient-to-br from-emerald-200 via-success to-emerald-600 bg-clip-text text-transparent;
+  }
+
+  /* Ambient ring glow behind hero metric */
+  .hero-ring-glow {
+    background: radial-gradient(closest-side, rgba(14, 165, 233, 0.18), transparent 70%);
+  }
+  .hero-ring-glow-danger {
+    background: radial-gradient(closest-side, rgba(239, 68, 68, 0.22), transparent 70%);
+  }
+  .hero-ring-glow-warning {
+    background: radial-gradient(closest-side, rgba(245, 158, 11, 0.2), transparent 70%);
+  }
+
+  /* Critical incident pulse — used for incident alerts / critical agent cards */
+  .pulse-critical {
+    animation: pulseCritical 1.6s ease-in-out infinite;
+  }
+  @keyframes pulseCritical {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.45); }
+    50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+  }
+
+  /* Soft fade for healthy / low-priority cards so critical items pop */
+  .fade-healthy {
+    @apply opacity-70 hover:opacity-100 transition-opacity duration-300;
+  }
+
+  /* Pipeline stage node */
+  .pipeline-node {
+    @apply relative flex items-center justify-center rounded-full border-2 transition-all duration-500;
+  }
+  .pipeline-node-idle {
+    @apply border-border/40 bg-surface-elevated/40 text-muted-foreground;
+  }
+  .pipeline-node-active {
+    @apply border-tracex-400 bg-tracex-500/20 text-tracex-300;
+    box-shadow: 0 0 0 6px rgba(14, 165, 233, 0.12), 0 0 24px rgba(14, 165, 233, 0.35);
+  }
+  .pipeline-node-done {
+    @apply border-success bg-success/15 text-success;
+  }
+  .pipeline-node-failed {
+    @apply border-danger bg-danger/15 text-danger;
+  }
+
+  /* Pipeline connector line fill */
+  .pipeline-connector {
+    @apply h-0.5 flex-1 bg-border/40 relative overflow-hidden rounded-full;
+  }
+  .pipeline-connector-fill {
+    @apply absolute inset-y-0 left-0 bg-tracex-400 rounded-full transition-all duration-700 ease-out;
+  }
+
+  /* Cinematic frame transitions */
+  .cinematic-frame {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  /* AI narration subtitle bar */
+  .narration-bar {
+    @apply px-4 py-2.5 rounded-lg border border-tracex-500/20 bg-tracex-500/5 text-sm text-tracex-100/90 italic;
+  }
+
+  /* Story card section label */
+  .story-label {
+    @apply text-[11px] font-semibold uppercase tracking-[0.15em] text-tracex-400/80 flex items-center gap-1.5;
+  }
+
+  /* Brief flash when the fleet reliability score changes */
+  @keyframes scoreFlashDown {
+    0% { background-color: transparent; }
+    25% { background-color: rgba(239, 68, 68, 0.18); }
+    100% { background-color: transparent; }
+  }
+  @keyframes scoreFlashUp {
+    0% { background-color: transparent; }
+    25% { background-color: rgba(34, 197, 94, 0.18); }
+    100% { background-color: transparent; }
+  }
+  .score-flash-down {
+    animation: scoreFlashDown 1.2s ease-out;
+  }
+  .score-flash-up {
+    animation: scoreFlashUp 1.2s ease-out;
+  }
+
+  /* Diff view */
+  .diff-added { @apply bg-success/10 border-l-2 border-success; }
+  .diff-removed { @apply bg-danger/10 border-l-2 border-danger; }
+  .diff-context { @apply text-muted-foreground; }
+
+  /* Metric trend arrows */
+  .trend-up { @apply text-danger; }
+  .trend-down { @apply text-success; }
+  .trend-stable { @apply text-muted-foreground; }
+}
+
+@layer utilities {
+  /* Text gradient */
+  .text-gradient {
+    @apply bg-gradient-to-r from-tracex-400 to-tracex-600 bg-clip-text text-transparent;
+  }
+
+  /* Card hover effect */
+  .card-hover {
+    @apply transition-all duration-200 hover:border-tracex-500/50 hover:shadow-glow;
+  }
+
+  /* Truncate with fade */
+  .truncate-fade {
+    mask-image: linear-gradient(to right, black 80%, transparent 100%);
+  }
+
+  /* No select */
+  .no-select {
+    @apply select-none;
+  }
+}

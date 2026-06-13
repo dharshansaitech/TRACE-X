@@ -1,0 +1,112 @@
+# docker-compose.yml — TRACE-X local development environment
+version: "3.9"
+
+services:
+  # ── Backend API ───────────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: runtime
+    image: tracex-backend:local
+    container_name: tracex-backend
+    ports:
+      - "8000:8080"
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+      - LOG_LEVEL=DEBUG
+      - HOST=0.0.0.0
+      - PORT=8080
+      - GCP_PROJECT_ID=${GCP_PROJECT_ID:-tracex-hackathon}
+      - GCP_REGION=${GCP_REGION:-us-central1}
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json
+      - FIRESTORE_DATABASE=(default)
+      - GEMINI_MODEL=gemini-2.0-flash-001
+      - CORS_ORIGINS=http://localhost:3000,http://localhost:3001
+      - API_KEYS=demo-api-key-tracex-hackathon
+      - ARIZE_API_KEY=${ARIZE_API_KEY:-demo-arize-key}
+      - ARIZE_SPACE_KEY=${ARIZE_SPACE_KEY:-demo-space-key}
+    volumes:
+      - ./backend:/app
+      - ${GOOGLE_APPLICATION_CREDENTIALS:-/dev/null}:/app/credentials.json:ro
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      - tracex-net
+
+  # ── Frontend ─────────────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: runner
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8000/api/v1
+        NEXT_PUBLIC_WS_URL: ws://localhost:8000/ws
+        NEXT_PUBLIC_API_KEY: demo-api-key-tracex-hackathon
+    image: tracex-frontend:local
+    container_name: tracex-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+      - NEXT_PUBLIC_WS_URL=ws://localhost:8000/ws
+      - NEXT_PUBLIC_API_KEY=demo-api-key-tracex-hackathon
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - tracex-net
+
+  # ── Firebase emulator (Firestore) ─────────────────────────────────────────────
+  firestore-emulator:
+    image: gcr.io/google.com/cloudsdktool/cloud-sdk:latest
+    container_name: tracex-firestore
+    command: >
+      gcloud emulators firestore start
+      --host-port=0.0.0.0:8088
+      --project=tracex-hackathon
+    ports:
+      - "8088:8088"
+    environment:
+      - FIRESTORE_EMULATOR_HOST=firestore-emulator:8088
+    networks:
+      - tracex-net
+    profiles:
+      - emulators
+
+  # ── Pub/Sub emulator ──────────────────────────────────────────────────────────
+  pubsub-emulator:
+    image: gcr.io/google.com/cloudsdktool/cloud-sdk:latest
+    container_name: tracex-pubsub
+    command: >
+      gcloud beta emulators pubsub start
+      --host-port=0.0.0.0:8085
+      --project=tracex-hackathon
+    ports:
+      - "8085:8085"
+    environment:
+      - PUBSUB_EMULATOR_HOST=pubsub-emulator:8085
+    networks:
+      - tracex-net
+    profiles:
+      - emulators
+
+networks:
+  tracex-net:
+    driver: bridge
+
+volumes:
+  tracex-data:

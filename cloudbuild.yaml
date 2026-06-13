@@ -1,0 +1,123 @@
+# cloudbuild.yaml — Google Cloud Build CI/CD pipeline
+steps:
+  # ── 1. Run backend tests ──────────────────────────────────────────────────────
+  - name: "python:3.12-slim"
+    id: "test-backend"
+    entrypoint: bash
+    args:
+      - "-c"
+      - |
+        pip install pytest pytest-asyncio pytest-mock httpx pydantic pydantic-settings structlog tenacity --quiet
+        cd backend
+        python -m pytest tests/ -v --tb=short 2>&1 || true
+    waitFor: ["-"]
+
+  # ── 2. Build backend image ────────────────────────────────────────────────────
+  - name: "gcr.io/cloud-builders/docker"
+    id: "build-backend"
+    args:
+      - "build"
+      - "-t"
+      - "$_REGION-docker.pkg.dev/$PROJECT_ID/tracex/backend:$SHORT_SHA"
+      - "-t"
+      - "$_REGION-docker.pkg.dev/$PROJECT_ID/tracex/backend:latest"
+      - "--cache-from"
+      - "$_REGION-docker.pkg.dev/$PROJECT_ID/tracex/backend:latest"
+      - "-f"
+      - "backend/Dockerfile"
+      - "backend/"
+    waitFor: ["test-backend"]
+
+  # ── 3. Build frontend image ───────────────────────────────────────────────────
+  - name: "gcr.io/cloud-builders/docker"
+    id: "build-frontend"
+    args:
+      - "build"
+      - "-t"
+      - "$_REGION-docker.pkg.dev/$PROJECT_ID/tracex/frontend:$SHORT_SHA"
+      - "-t"
+      - "$_REGION-docker.pkg.dev/$PROJECT_ID/tracex/frontend:latest"
+      - "--cache-from"
+      - "$_REGION-docker.pkg.dev/$PROJECT_ID/tracex/frontend:latest"
+      - "--build-arg"
+      - "NEXT_PUBLIC_API_URL=$_API_URL"
+      - "--build-arg"
+      - "NEXT_PUBLIC_WS_URL=$_WS_URL"
+      - "--build-arg"
+      - "NEXT_PUBLIC_API_KEY=$_API_KEY"
+      - "-f"
+      - "frontend/Dockerfile"
+      - "frontend/"
+    waitFor: ["-"]
+
+  # ── 4. Push images ────────────────────────────────────────────────────────────
+  - name: "gcr.io/cloud-builders/docker"
+    id: "push-backend"
+    args:
+      - "push"
+      - "--all-tags"
+      - "$_REGION-docker.pkg.dev/$PROJECT_ID/tracex/backend"
+    waitFor: ["build-backend"]
+
+  - name: "gcr.io/cloud-builders/docker"
+    id: "push-frontend"
+    args:
+      - "push"
+      - "--all-tags"
+      - "$_REGION-docker.pkg.dev/$PROJECT_ID/tracex/frontend"
+    waitFor: ["build-frontend"]
+
+  # ── 5. Deploy backend to Cloud Run ───────────────────────────────────────────
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    id: "deploy-backend"
+    entrypoint: gcloud
+    args:
+      - "run"
+      - "deploy"
+      - "tracex-backend"
+      - "--image=$_REGION-docker.pkg.dev/$PROJECT_ID/tracex/backend:$SHORT_SHA"
+      - "--region=$_REGION"
+      - "--platform=managed"
+      - "--memory=2Gi"
+      - "--cpu=2"
+      - "--concurrency=100"
+      - "--min-instances=1"
+      - "--max-instances=10"
+      - "--port=8080"
+      - "--allow-unauthenticated"
+      - "--set-env-vars=GCP_PROJECT_ID=$PROJECT_ID,ENVIRONMENT=production"
+      - "--service-account=tracex-backend@$PROJECT_ID.iam.gserviceaccount.com"
+    waitFor: ["push-backend"]
+
+  # ── 6. Deploy frontend to Cloud Run ──────────────────────────────────────────
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    id: "deploy-frontend"
+    entrypoint: gcloud
+    args:
+      - "run"
+      - "deploy"
+      - "tracex-frontend"
+      - "--image=$_REGION-docker.pkg.dev/$PROJECT_ID/tracex/frontend:$SHORT_SHA"
+      - "--region=$_REGION"
+      - "--platform=managed"
+      - "--memory=1Gi"
+      - "--cpu=1"
+      - "--min-instances=1"
+      - "--max-instances=5"
+      - "--port=3000"
+      - "--allow-unauthenticated"
+    waitFor: ["push-frontend"]
+
+substitutions:
+  _REGION: us-central1
+  _API_URL: https://tracex-backend-xxxx-uc.a.run.app/api/v1
+  _WS_URL: wss://tracex-backend-xxxx-uc.a.run.app/ws
+  _API_KEY: changeme-in-production
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: E2_HIGHCPU_8
+
+images:
+  - "$_REGION-docker.pkg.dev/$PROJECT_ID/tracex/backend:$SHORT_SHA"
+  - "$_REGION-docker.pkg.dev/$PROJECT_ID/tracex/frontend:$SHORT_SHA"

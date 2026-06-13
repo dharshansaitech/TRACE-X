@@ -1,0 +1,26 @@
+# Vercel
+.vercel
+
+# Environment files (secrets)
+.env
+.env.local
+.env*.local
+!.env.example
+!.env.local.example
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+backend_out.log
+backend_err.log
+
+# Node
+node_modules/
+.next/
+dist/
+build/
+
+# Logs
+*.log
