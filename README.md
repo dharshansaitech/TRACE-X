@@ -94,7 +94,7 @@ When an AI agent fails in production, TRACE-X automatically:
 ### Option 1: Docker Compose (Recommended)
 
 ```bash
-git clone https://github.com/yourusername/trace-x
+git clone https://github.com/dharshansaitech/TRACE-X.git
 cd trace-x
 
 # Copy and configure environment
