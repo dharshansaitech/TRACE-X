@@ -440,6 +440,13 @@ In demo mode (no Arize API key), full mock responses are returned so the platfor
 
 ---
 
+## Documentation
+
+- [Architecture](docs/ARCHITECTURE.md) — system, sequence, and component diagrams
+- [Requirements](docs/REQUIREMENTS.md) — product vision, personas, functional requirements
+
+---
+
 ## License
 
 MIT — built for the Google Cloud + Arize AI Hackathon.
