@@ -1,5 +1,12 @@
 # TRACE-X — The Flight Recorder For AI Agents
 
+![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js&logoColor=white)
+![React](https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white)
+![Vertex AI](https://img.shields.io/badge/Vertex_AI-Gemini_2.0_Flash-4285F4?logo=googlecloud&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-22C55E)
+
 > Every commercial aircraft has a black box. Your AI agents should too.
 
 TRACE-X is an autonomous AI agent reliability platform that captures, diagnoses, repairs, and replays failures in AI agent pipelines — in real time. Built for the Google Cloud + Arize AI Hackathon.
