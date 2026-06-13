@@ -21,6 +21,18 @@ When an AI agent fails in production, TRACE-X automatically:
 
 ---
 
+## Screenshots
+
+| Flight Deck | Replay Center |
+|---|---|
+| ![Flight Deck](dashboard_demo.png) | ![Replay Center](replay_demo.png) |
+
+| Repair Queue | Simulator |
+|---|---|
+| ![Repair Queue](repairs_demo.png) | ![Simulator](simulator_demo.png) |
+
+---
+
 ## Architecture
 
 ```
