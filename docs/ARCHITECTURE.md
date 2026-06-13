@@ -78,7 +78,7 @@ sequenceDiagram
     participant PubSub
     participant Firestore
     participant Observer
-    participant ArizeМCP
+    participant ArizeMCP
     participant Diagnosis
     participant Repair
     participant Validation
@@ -90,13 +90,13 @@ sequenceDiagram
     PubSub->>Firestore: Store trace (async)
     PubSub->>Observer: Trigger analysis
 
-    Observer->>ArizeМCP: get_agent_baseline()
-    ArizeМCP-->>Observer: baseline metrics
+    Observer->>ArizeMCP: get_agent_baseline()
+    ArizeMCP-->>Observer: baseline metrics
     Observer->>Observer: Classify severity
     Observer-->>Diagnosis: ObservationResult (if severity > low)
 
-    Diagnosis->>ArizeМCP: get_failure_history()
-    ArizeМCP-->>Diagnosis: historical patterns
+    Diagnosis->>ArizeMCP: get_failure_history()
+    ArizeMCP-->>Diagnosis: historical patterns
     Diagnosis->>Diagnosis: Gemini root cause analysis
     Diagnosis->>Firestore: Store DiagnosisResult
     Diagnosis-->>Repair: DiagnosisResult (if confidence >= 0.70)
@@ -175,7 +175,7 @@ graph TB
     end
 
     subgraph External
-        MCP[ArizeМCPClient]
+        MCP[ArizeMCPClient]
         VA[VertexAI Gemini]
         GCP[Google Cloud]
     end
